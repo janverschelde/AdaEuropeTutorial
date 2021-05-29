@@ -1,3 +1,4 @@
+with System.Multiprocessors;
 with Text_IO;
 with integer64_io;
 with float64_io;
@@ -128,6 +129,9 @@ package body estimate_pi is
       end launch;
 
    begin
+      Text_IO.put("Number of CPUs : ");
+      integer64_io.put(integer64(System.Multiprocessors.Number_of_CPUs),1);
+      Text_IO.new_line;
       Text_IO.Put_Line ("Launching tasks ...");
       launch (1);
       Text_IO.Put_Line ("Launched" & integer64'image (p) & " tasks.");
