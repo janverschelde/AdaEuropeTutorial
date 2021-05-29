@@ -7,5 +7,5 @@ begin
   -- trapezoidal_pi.test_task_launch(8);
   -- trapezoidal_pi.static_run;
   -- trapezoidal_pi.test_job_queue;
-   trapezoidal_pi.dynamic_run;
+  trapezoidal_pi.dynamic_run;
 end main;

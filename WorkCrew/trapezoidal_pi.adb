@@ -3,8 +3,9 @@ with Ada.Numerics;
 with Ada.Numerics.Generic_Elementary_Functions;
 with integer64_io;
 with float64_io;
-with Semaphore;
 with Ada.Task_Identification;
+with Identification;
+with Semaphore;
 
 package body trapezoidal_pi is
 
@@ -74,35 +75,17 @@ package body trapezoidal_pi is
       run(2**28);
    end test;
 
-   protected id_generator is
-
-      procedure get ( id : out integer64 );
-      -- returns a unique identification number
-
-   private
-      next_id : integer64 := 1;
-   end id_generator;
-
-   protected body id_generator is
-      procedure get ( id : out integer64 ) is
-      begin
-         id := next_id;
-         next_id := next_id + 1;
-      end get;
-   end id_generator;
-
    procedure hello_tasks (p : in integer64 := 4) is
 
       task type worker;
 
       task body worker is
 
-         idnbr : integer64;
+         idnbr : constant integer64 := Identification.Number;
          taskid : constant Ada.Task_Identification.Task_Id
                 := Ada.Task_Identification.Current_Task;
 
       begin
-         id_generator.get(idnbr);
          Text_IO.Put_Line ("Task" & integer64'image (idnbr)
                                   & " says hello with id "
                 & Ada.Task_Identification.Image(taskid) & ".");
@@ -123,10 +106,10 @@ package body trapezoidal_pi is
 
       task body worker is
 
-         idnbr,myjob : integer64;
+         idnbr : constant integer64 := Identification.Number;
+         myjob : integer64;
 
       begin
-         id_generator.get(idnbr);
          loop
             Semaphore.Request(sem);
             nextjob := nextjob + 1; myjob := nextjob;
@@ -159,11 +142,10 @@ package body trapezoidal_pi is
 
       task body worker is
 
-         myid : integer64;
+         myid : constant integer64 := Identification.Number;
          start,stop : float64;
 
       begin
-         id_generator.get(myid);
          start := float64(myid-1)*step;
          stop := float64(myid)*step;
          results(myid) := recursive_rule(circle'access,start,stop,nsteps);
@@ -186,11 +168,11 @@ package body trapezoidal_pi is
 
       task body worker is
 
-         myid,myjob : integer64;
+         myid : constant integer64 := Identification.Number;
+         myjob : integer64;
          start,stop : float64;
 
       begin
-         id_generator.get(myid);
          loop
             Semaphore.Request(sem);
             nextjob := nextjob + 1; myjob := nextjob;
