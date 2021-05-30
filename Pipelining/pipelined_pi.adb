@@ -120,7 +120,6 @@ package body pipelined_pi is
          b : constant float64 := float64(i)*step;
 
       begin
-         Text_IO.Put_Line ("Hello from worker" & integer64'image(i) & ".");
          results(i) := recursive_rule(circle'access,a,b,nsteps);
       end worker;
 
