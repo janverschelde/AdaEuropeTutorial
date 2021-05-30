@@ -1,3 +1,4 @@
+with System.Multiprocessors;
 with Text_IO;
 with Ada.Numerics;
 with integer64_io;
@@ -66,7 +67,8 @@ package body pipelined_pi is
 
       procedure launch (level : integer64) is
      
-         task type worker;
+         task type worker
+            with CPU => System.Multiprocessors.CPU_Range(level);
 
          task body worker is
 
