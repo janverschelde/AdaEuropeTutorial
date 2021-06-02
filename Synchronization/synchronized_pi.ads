@@ -40,4 +40,11 @@ package synchronized_pi is
    --   producer_pace   time the producers need to produce a new number;
    --   consumer_pace   time the consuders need to consume a new number.
 
+   procedure run_2stage4pi
+                ( step_number : in integer64 := 16;
+                  queue_size  : in integer64 := 16 );
+
+  -- DESCRIPTION :
+  --   Runs a 2-stage pipeline to approximate pi.
+
 end synchronized_pi; 

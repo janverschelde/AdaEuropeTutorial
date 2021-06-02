@@ -10,4 +10,5 @@ begin
   -- synchronized_pi.test_producers_consumers(7,3,3,3,0.2,0.9);
   -- comsumers are faster than producers
    synchronized_pi.test_producers_consumers(7,3,4,2,0.9,0.2);
+  -- synchronized_pi.run_2stage4pi(409600,1024);
 end main;

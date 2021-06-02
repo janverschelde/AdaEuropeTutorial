@@ -1,4 +1,5 @@
 with Text_IO,Integer64_IO,Float64_IO;
+with trapezoidal_pi;
 with float64_queue;
 
 package body synchronized_pi is
@@ -71,6 +72,9 @@ package body synchronized_pi is
             end loop;
          end consumer;
 
+         p : producer;
+         c : consumer;
+
      begin
         null;
      end run;
@@ -78,7 +82,7 @@ package body synchronized_pi is
    begin
       Text_IO.put_line("Starting run with" & integer64'image(cycles_number) 
                                            & " cycles ...");
-      float64_queue.Initialize(cycles_number/2);
+      float64_queue.Initialize(queue_size);
       run;
       float64_queue.Clear;
       Text_io.put("The result : "); Float64_IO.put(result);
@@ -246,7 +250,7 @@ package body synchronized_pi is
                                            & " cycles ...");
       results := (results'range => 0.0);
       all_done := (all_done'range => false);
-      float64_queue.Initialize(cycles_number/2);
+      float64_queue.Initialize(queue_size);
       run;
       float64_queue.Clear;
       for k in results'range loop
@@ -265,5 +269,108 @@ package body synchronized_pi is
          end if;
       end;
    end test_producers_consumers;
+
+   procedure run_2stage4pi
+                ( step_number : in integer64 := 16;
+                  queue_size  : in integer64 := 16 ) is
+
+      result : float64 := 0.0;
+      step : constant float64 := 1.0/float64(step_number);
+      nbfprod : integer64 := 0;
+      nbfcons : integer64 := 0;
+
+      procedure run is
+
+         task type producer;
+
+         task body producer is
+
+            x,nbr : float64 := 0.0;
+            fail : boolean;
+
+         begin
+            for k in 1..step_number loop
+               nbr := trapezoidal_pi.circle(x);
+              -- float64_io.put(nbr); text_io.new_line;
+               x := x + step;
+              -- text_io.put(" x :");
+              -- float64_io.put(x); text_io.new_line;
+               loop
+                  fail := false;
+                  declare
+                  begin
+                     float64_queue.push_back(nbr);
+                  exception
+                     when float64_queue.queue_full =>
+                        fail := true; nbfprod := nbfprod + 1;
+                  end;
+                  exit when not fail;
+                  delay 0.1;
+               end loop;
+            end loop;
+         end producer;
+
+         task type consumer;
+
+         task body consumer is
+
+            nbr : float64;
+            fail : boolean;
+
+         begin
+            for k in 1..step_number loop
+               loop
+                  fail := false;
+                  declare
+                  begin
+                     nbr := float64_queue.pop_front;
+                  exception
+                     when float64_queue.queue_empty => 
+                        fail := true; nbfcons := nbfcons + 1;
+                  end;
+                  exit when not fail;
+                  delay 0.1;
+               end loop;
+               if k = 1 or k = step_number
+                then result := result + step*nbr/2.0;
+                else result := result + step*nbr;
+               end if;
+            end loop;
+         end consumer;
+
+         p : producer;
+         c : consumer;
+
+     begin
+        null;
+     end run;
+
+   begin
+      float64_queue.Initialize(queue_size);
+      run;
+      float64_queue.Clear;
+      Text_IO.put("# failures producer : ");
+      integer64_io.put(nbfprod,1); Text_IO.new_line;
+      Text_IO.put("# failures consumer : ");
+      integer64_io.put(nbfcons,1); Text_IO.new_line;
+      Text_io.put("The result : "); Float64_IO.put(4.0*result);
+      Text_IO.new_line;
+      declare
+        step : constant float64 := 1.0/float64(step_number);
+        x,nbr : float64 := 0.0;
+      begin
+        result := trapezoidal_pi.circle(x)*step/2.0;
+        for k in 2..step_number-1 loop
+           x := x + step;
+           nbr := trapezoidal_pi.circle(x);
+           result := result + nbr*step;
+        end loop;
+        x := x + step;
+        nbr := trapezoidal_pi.circle(x);
+        result := result + nbr*step/2.0;
+      end;
+      Text_io.put("The result : "); Float64_IO.put(4.0*result);
+      Text_IO.new_line;
+   end run_2stage4pi;
 
 end synchronized_pi; 
