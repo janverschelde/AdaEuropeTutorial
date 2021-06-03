@@ -4,10 +4,14 @@
 # not the main in this folder, so the instructions have to be
 # a bit more explicit to avoid the confusion between the mains.
 
+SOURCE=../src
+INTRO=../../Introduction/src
+WORK=../../WorkCrew/src
+PIPE=../../Pipelining/src
+
 main:
-	gnatmake -c -O3 -gnatp main.adb \
-                 -I../Introduction -I../WorkCrew -I../Pipelining
-	gnatbind main -I../Introduction -I../WorkCrew -I../Pipelining
+	gnatmake -c $(SOURCE)/main.adb -I$(INTRO) -I$(WORK) -I$(PIPE)
+	gnatbind main -I$(INTRO) -I$(WORK) -I$(PIPE)
 	gnatlink main
 
 clean:
