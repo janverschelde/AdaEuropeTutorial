@@ -14,7 +14,7 @@ package body Float64_Queue is
 
    procedure Initialize ( size : in integer64 ) is
 
-      v : vector(1..size);
+      v : vector(1..size) := (1..size => 0.0);
 
    begin
       data := new vector'(v);
