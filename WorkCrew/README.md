@@ -1,12 +1,12 @@
-# Ideal Parallel Computations
+# The Work Crew Model
 
-The goal of the package ``estimate_pi`` is to illustrate the launching
-of any number of threads and to demonstrate that speedups are obtained
-in the application to a simple simulation to estimate pi.
+The goal of the package ``trapezoidal_pi`` is to illustrate 
+dynamic load balancing with an array of worker threads
+on the application of the composite trapezoidal rule to approximate pi.
 
 To build the code, run ``gprbuild intro.gpr`` at the command line,
 or for use in GNATstudio.  To compile the code with full optimization
-and the suppression of all checks, use the makefile in the obj folder.
+and the suppression of all checks, use the makefile in the ``obj`` folder.
 
 On Linux, with ``time``, as in ``time ./main``, 
 we obtain the wall clock time of the run.
