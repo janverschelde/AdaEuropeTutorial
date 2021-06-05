@@ -43,6 +43,23 @@ package body trapezoidal_pi is
       return result;
    end recursive_rule;
 
+   function reverse_rule
+              ( f : access function ( x : float64 ) return float64;
+                a,b : float64; n : integer64 ) return float64 is
+ 
+      result : float64 := (f(a) + f(b))/2.0;
+      step : constant float64 := (b - a)/float64(n);
+      xarg : float64 := b;
+
+   begin
+      for k in 1..n-1 loop
+         xarg := xarg - step;
+         result := result + f(xarg);
+      end loop;
+      result := step*result;
+      return result;
+   end reverse_rule;
+
    package Double_Elementary_Functions is
       new Ada.Numerics.Generic_Elementary_Functions(float64);
 
@@ -74,6 +91,38 @@ package body trapezoidal_pi is
    begin
       run(2**28);
    end test;
+
+   procedure test_accuracy is
+
+      nsteps : constant integer64 := 2**28;
+   -- if 2**20, then no noticeable difference in the accuracy --
+      forward : constant float64
+              := composite_rule(circle'access,0.0,1.0,nsteps);
+      backward : constant float64
+               := reverse_rule(circle'access,0.0,1.0,nsteps);
+      approx : constant float64
+             := recursive_rule(circle'access,0.0,1.0,nsteps);
+      est4pi1 : constant float64 := 4.0*forward;
+      est4pi2 : constant float64 := 4.0*backward;
+      est4pi3 : constant float64 := 4.0*approx;
+      error : float64;
+
+   begin
+      Text_IO.put("  Forward approximation :"); float64_io.put(est4pi1);
+      error := abs(Ada.Numerics.Pi - est4pi1);
+      Text_IO.put("  error : ");
+      float64_io.put(error,1,3,3); Text_IO.new_line;
+      Text_IO.put(" Backward approximation :"); float64_io.put(est4pi2);
+      error := abs(Ada.Numerics.Pi - est4pi2);
+      Text_IO.put("  error : ");
+      float64_io.put(error,1,3,3); Text_IO.new_line;
+      Text_IO.put("Recursive approximation :"); float64_io.put(est4pi3);
+      error := abs(Ada.Numerics.Pi - est4pi3);
+      Text_IO.put("  error : ");
+      float64_io.put(error,1,3,3); Text_IO.new_line;
+      Text_IO.put("    Number of intervals : ");
+      integer64_io.put(nsteps,1); Text_IO.new_line;
+   end test_accuracy;
 
    procedure hello_tasks (p : in integer64 := 4) is
 

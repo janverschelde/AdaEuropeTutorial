@@ -27,6 +27,18 @@ package trapezoidal_pi is
    --   integral of f over [a,b] with n subintervals.
    --   For better accuracy, n should be a power of 2.
 
+   function reverse_rule
+              ( f : access function ( x : float64 ) return float64;
+                a,b : float64; n : integer64 ) return float64;
+
+   -- DESCRIPTION :
+   --   Applies the composite trapezoidal rule to approximate the
+   --   definite integral of f over [a,b] with n subintervals,
+   --   but the order of the summation is reversed,
+   --   starting with the last interval instead of the first.
+   --   For the example of the integral of sqrt(1-x**2)
+   --   for x in [0,1], this could give a more accurate result ...
+
    function circle ( x : float64 ) return float64;
 
    -- DESCRIPTION :
@@ -36,6 +48,12 @@ package trapezoidal_pi is
 
    -- DESCRIPTION :
    --   Tests the trapezoidal rule for the estimation of pi.
+
+   procedure test_accuracy;
+
+   -- DESCRIPTION :
+   --   Compares the errors of the three formulas to approximate pi:
+   --   the composite rule, the reverse rule, and the recursive rule.
 
    procedure test_task_launch (p : integer64 := 4);
 
