@@ -226,9 +226,9 @@ package body trapezoidal_pi is
             Semaphore.Request(sem);
             nextjob := nextjob + 1; myjob := nextjob;
             Semaphore.Release(sem);
-            exit when (nextjob > n);
-            start := float64(nextjob-1)*step;
-            stop := float64(nextjob)*step;
+            exit when (myjob > n);
+            start := float64(myjob-1)*step;
+            stop := float64(myjob)*step;
             results(myid) := results(myid)
                            + recursive_rule(circle'access,start,stop,nsteps);
          end loop;
